@@ -239,7 +239,9 @@ load skills.
 ```text
 rewise/
 ├── README.md
+├── SPEC.md                     design intent, decisions, and verification
 ├── LICENSE
+├── .gitattributes
 └── skills/
     └── rewise/
         ├── SKILL.md            entry point agents discover

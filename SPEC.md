@@ -1,6 +1,9 @@
-# Rewise — Design
+# Rewise — Specification
 
 Status: implemented and published (https://github.com/MuhammadAidil-dev/rewise). Date: 2026-10-28.
+
+This document records the intent, decisions, and design of Rewise. For usage,
+see [README.md](README.md).
 
 ## 1. Intent and why
 
@@ -72,7 +75,13 @@ Calls made by the designer (author may override):
 - **Format:** plain markdown only. Easiest to read, diff, and maintain; no
   dependency to audit.
 - **Core vs wrapper:** the protocol lives in tool-neutral `PROTOCOL.md`;
-  `SKILL.md` is a thin Claude Code wrapper pointing to it.
+  `SKILL.md` is a thin entry point that triggers bootstrap and points to it.
+- **License:** MIT, copyright holder `MuhammadAidil-dev`.
+- **Distribution (author's decision):** installed with the open `skills` CLI
+  (`npx skills add MuhammadAidil-dev/rewise`) rather than a custom installer, so
+  the kit stays dependency-free. The CLI has no post-install hook, so
+  "automatic" means the skill bootstraps the project on first trigger.
+- **Line endings:** LF everywhere, enforced by `.gitattributes`.
 
 ## 6. Design
 
@@ -80,18 +89,25 @@ Calls made by the designer (author may override):
 
 ```
 rewise/
-├── README.md              what it is, install, how it works, example
-├── LICENSE                MIT (designer's call)
-├── SKILL.md               thin Claude Code wrapper -> PROTOCOL.md
-├── PROTOCOL.md            tool-neutral lifecycle rules (the core)
-├── SETUP.md               step-by-step install any agent can follow
-└── templates/
-    ├── AGENTS-block.md    block appended to project AGENTS.md/CLAUDE.md
-    ├── index.md           empty memory index
-    ├── mistake.md         mistake entry template
-    ├── lesson.md          reusable-knowledge entry template
-    └── decision.md        decision entry template
+├── README.md                 what it is, install, how it works, example
+├── SPEC.md                   this document
+├── LICENSE                   MIT
+├── .gitattributes            LF line endings
+└── skills/
+    └── rewise/               the folder the `skills` CLI installs
+        ├── SKILL.md          entry point: bootstrap + workflow trigger
+        ├── PROTOCOL.md       tool-neutral lifecycle rules (the core)
+        ├── SETUP.md          bootstrap steps any agent can follow
+        └── templates/
+            ├── AGENTS-block.md  block appended to project AGENTS.md/CLAUDE.md
+            ├── index.md         empty memory index
+            ├── mistake.md       mistake entry template
+            ├── lesson.md        reusable-knowledge entry template
+            └── decision.md      decision entry template
 ```
+
+The skill lives under `skills/rewise/` so installation copies only skill files,
+not the README or this spec.
 
 ### 6.2 What gets installed in a user's project
 
@@ -99,6 +115,7 @@ rewise/
 <project>/
 ├── AGENTS.md              + short block (always-on trigger)
 └── memory/
+    ├── PROTOCOL.md        copy of the rules
     ├── index.md           one line per entry
     ├── mistakes/
     ├── lessons/
@@ -176,16 +193,25 @@ Explicit current user instruction > current project requirements > project
 architecture/decisions > relevant memory > general conventions. Memory is never
 followed blindly; conflicts are investigated and the stale entry updated.
 
-### 6.8 Install (`SETUP.md`)
+### 6.8 Bootstrap (`SETUP.md`)
 
-An agent, given only `SETUP.md`, should:
+On first trigger in a project without `memory/PROTOCOL.md`, `SKILL.md` has the
+agent run `SETUP.md` without asking. Given only `SETUP.md`, an agent should:
 
-1. Create `memory/` with `index.md`, `mistakes/`, `lessons/`, `decisions/`.
+1. Create `memory/` with `index.md`, `mistakes/`, `lessons/`, `decisions/`
+   (with `.gitkeep` in the three subfolders so they are committable).
 2. Copy `PROTOCOL.md` into `memory/`.
 3. Append `templates/AGENTS-block.md` to `AGENTS.md` (or `CLAUDE.md` if that is
    all that exists; create `AGENTS.md` if neither exists, and tell the user).
+   Do not add the `## Rewise` block twice.
 4. Skip anything that already exists; never overwrite user content.
-5. Report what was created.
+5. Report what was created in one line, then continue the user's task.
+
+### 6.9 Distribution
+
+`npx skills add MuhammadAidil-dev/rewise` copies `skills/rewise/` into the
+agent's skills directory. After bootstrap, the `AGENTS.md` block keeps the rules
+active for agents and teammates that do not have the skill installed.
 
 ## 7. Left to the builder
 
@@ -196,7 +222,11 @@ An agent, given only `SETUP.md`, should:
 
 ## 8. Verification
 
-No code to unit-test. Verify by dry run in a throwaway empty project:
+No code to unit-test. Verify by dry run in a throwaway empty project.
+
+Done: steps 1 and 5 below, plus `npx skills add` from the local path and from
+GitHub (all skill files copied). Not yet done: steps 2-4 (need a real agent
+session) and agents other than Claude Code.
 
 1. Install using only `SETUP.md`; confirm structure and AGENTS block appear and
    nothing existing is overwritten.
