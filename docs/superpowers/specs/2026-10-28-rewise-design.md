@@ -1,6 +1,6 @@
 # Rewise — Design
 
-Status: draft for approval. Date: 2026-10-28.
+Status: implemented and published (https://github.com/MuhammadAidil-dev/rewise). Date: 2026-10-28.
 
 ## 1. Intent and why
 

@@ -67,10 +67,8 @@ Use the open [`skills`](https://github.com/vercel-labs/skills) CLI. It installs
 the skill into the agents it detects (Claude Code, Codex, Cursor, and many more).
 
 ```bash
-npx skills add <owner>/rewise
+npx skills add MuhammadAidil-dev/rewise
 ```
-
-Replace `<owner>/rewise` with this repository's GitHub path.
 
 | Option | Effect |
 |---|---|
@@ -303,7 +301,8 @@ Yes. It is plain text, reviewable in pull requests, and shared with your team.
 
 ## Contributing
 
-Issues and pull requests are welcome. Please keep the kit:
+[Issues](https://github.com/MuhammadAidil-dev/rewise/issues) and pull requests
+are welcome. Please keep the kit:
 
 - dependency-free and plain markdown,
 - tool-neutral (no stack-specific or project-specific content in templates),

@@ -1,0 +1,8 @@
+# Normalize line endings: store LF in the repo, check out LF everywhere.
+# The skill is plain markdown read by agents on any OS, so keep it consistent.
+* text=auto eol=lf
+
+# Make sure documentation and templates are always treated as text.
+*.md text eol=lf
+LICENSE text eol=lf
+.gitattributes text eol=lf
